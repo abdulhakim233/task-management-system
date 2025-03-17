@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
-    // Get all tasks (filtered by role)
+
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -20,7 +20,10 @@ class TaskController extends Controller
                 ->get();
         } else {
             $tasks = Task::query()
-                ->where('user_id', $user->id)
+                ->where(function ($query) use ($user) {
+                    $query->where('user_id', $user->id)
+                        ->orWhere('assigned_user_id', $user->id);
+                })
                 ->when($request->status, fn($query) => $query->where('status', $request->status))
                 ->orderBy('due_date')
                 ->get();
@@ -29,7 +32,7 @@ class TaskController extends Controller
         return response()->json($tasks, 200);
     }
 
-    // Create a new task
+
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -52,20 +55,20 @@ class TaskController extends Controller
         return response()->json($task, 201);
     }
 
-    // Show a specific task
+
     public function show($id)
     {
         $user = Auth::user();
         $task = Task::findOrFail($id);
 
-        if ($user->role !== 'admin' && $task->user_id !== $user->id) {
+        if ($user->role !== 'admin' && $task->user_id !== $user->id && $task->assigned_user_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         return response()->json($task, 200);
     }
 
-    // Update a task
+
     public function update(Request $request, $id)
     {
         $user = Auth::user();
@@ -87,7 +90,7 @@ class TaskController extends Controller
         return response()->json($task, 200);
     }
 
-    // Delete a task
+
     public function destroy($id)
     {
         $user = Auth::user();
@@ -102,11 +105,8 @@ class TaskController extends Controller
         return response()->json(['message' => 'Task deleted successfully'], 200);
     }
 
-    // Assign a user to a task
     public function assignUser(Request $request, $id)
     {
-
-
         $task = Task::findOrFail($id);
 
         $validated = $request->validate([
