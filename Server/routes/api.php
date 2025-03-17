@@ -21,6 +21,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tasks', [TaskController::class, 'store']);
     Route::get('/tasks/{id}', [TaskController::class, 'show']);       // Show a specific task
     Route::put('/tasks/{id}', [TaskController::class, 'update']);     // Update a task
-    Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->middleware(AdminMiddleware::class);;
+    Route::delete('/tasks/{id}', [TaskController::class, 'destroy']);
     Route::put('/tasks/{id}/assign', [TaskController::class, 'assignUser'])->middleware(AdminMiddleware::class); // Assign a user to a task
 });
