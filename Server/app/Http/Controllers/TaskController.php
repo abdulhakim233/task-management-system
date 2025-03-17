@@ -90,12 +90,8 @@ class TaskController extends Controller
     // Delete a task
     public function destroy($id)
     {
-        $user = Auth::user();
-        $task = Task::findOrFail($id);
 
-        if ($user->role !== 'admin' && $task->user_id !== $user->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        $task = Task::findOrFail($id);
 
         $task->delete();
 
