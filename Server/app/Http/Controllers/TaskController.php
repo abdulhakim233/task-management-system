@@ -8,14 +8,11 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
-
-
     // Get all tasks (filtered by role)
     public function index(Request $request)
     {
         $user = Auth::user();
 
-        // Admin can see all tasks, regular user sees only their own
         if ($user->role === 'admin') {
             $tasks = Task::query()
                 ->when($request->status, fn($query) => $query->where('status', $request->status))
@@ -42,13 +39,7 @@ class TaskController extends Controller
             'description' => 'required|string',
             'status' => 'required|in:Pending,In Progress,Completed',
             'due_date' => 'required|date',
-            'assigned_user_id' => 'nullable|exists:users,id'
         ]);
-
-        // Only admin can assign tasks to other users
-        if (isset($validated['assigned_user_id']) && $user->role !== 'admin') {
-            return response()->json(['message' => 'Unauthorized to assign tasks'], 403);
-        }
 
         $task = Task::create([
             'title' => $validated['title'],
@@ -56,7 +47,6 @@ class TaskController extends Controller
             'status' => $validated['status'],
             'due_date' => $validated['due_date'],
             'user_id' => $user->id,
-            'assigned_user_id' => $validated['assigned_user_id'] ?? null,
         ]);
 
         return response()->json($task, 201);
@@ -68,7 +58,6 @@ class TaskController extends Controller
         $user = Auth::user();
         $task = Task::findOrFail($id);
 
-        // Check if user has permission to view this task
         if ($user->role !== 'admin' && $task->user_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
@@ -82,7 +71,6 @@ class TaskController extends Controller
         $user = Auth::user();
         $task = Task::findOrFail($id);
 
-        // Check if user has permission to update this task
         if ($user->role !== 'admin' && $task->user_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
@@ -92,13 +80,7 @@ class TaskController extends Controller
             'description' => 'sometimes|string',
             'status' => 'sometimes|in:Pending,In Progress,Completed',
             'due_date' => 'sometimes|date',
-            'assigned_user_id' => 'nullable|exists:users,id'
         ]);
-
-        // Only admin can reassign tasks
-        if (isset($validated['assigned_user_id']) && $user->role !== 'admin') {
-            return response()->json(['message' => 'Unauthorized to reassign tasks'], 403);
-        }
 
         $task->update($validated);
 
@@ -111,7 +93,6 @@ class TaskController extends Controller
         $user = Auth::user();
         $task = Task::findOrFail($id);
 
-        // Check if user has permission to delete this task
         if ($user->role !== 'admin' && $task->user_id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
@@ -119,5 +100,23 @@ class TaskController extends Controller
         $task->delete();
 
         return response()->json(['message' => 'Task deleted successfully'], 200);
+    }
+
+    // Assign a user to a task
+    public function assignUser(Request $request, $id)
+    {
+
+
+        $task = Task::findOrFail($id);
+
+        $validated = $request->validate([
+            'assigned_user_id' => 'nullable|exists:users,id',
+        ]);
+
+        $task->update([
+            'assigned_user_id' => $validated['assigned_user_id'],
+        ]);
+
+        return response()->json($task, 200);
     }
 }
