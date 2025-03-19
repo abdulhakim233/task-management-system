@@ -63,5 +63,7 @@ VITE_APP_NAME="${APP_NAME}"
 3.Verify allowed_origins in Server/config/cors.php is set to the correct localhost address:
 
 'allowed_origins' => ['http://localhost:8080']
+
+
 4.Run the back-end development server:
 php artisan serve
