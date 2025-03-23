@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { PlusIcon, RefreshCcwIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Task } from "@/types/tasks"; // ✅ Use Task type
+import { Link } from "react-router-dom";
 
 interface TaskListProps {
   // ✅ Props are now optional
@@ -77,13 +78,21 @@ const TaskList: React.FC<TaskListProps> = ({
   };
 
   return (
-    <div className='space-y-6'>
-      <h2 className='text-2xl font-bold'>My Tasks</h2>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between w-full">
+        <h2 className="text-2xl font-bold ">My Tasks</h2>
+        <Link
+          to={"/tasks/new"}
+          className="flex text-white bg-blue-500 p-2 mr-4 rounded-md"
+        >
+          <PlusIcon /> Add Task
+        </Link>
+      </div>
       <TaskFilter currentFilters={filters} onFilterChange={setFilters} />
       {loading ? (
         <p>Loading tasks...</p>
       ) : (
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {tasks.map((task) => (
             <TaskCard
               key={task.id}
