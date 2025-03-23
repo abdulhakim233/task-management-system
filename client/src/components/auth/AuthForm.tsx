@@ -33,20 +33,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
-<<<<<<< HEAD
-    name: '',
-    email: '',
-    phone_number: '',
-    password: '',
-    password_confirmation: '',
-    role: 'user',
-=======
     name: "",
     email: "",
+    phone_number: "",
     password: "",
     password_confirmation: "",
     role: "user",
->>>>>>> c904955 (chore: update client and server files)
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,28 +59,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode }) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Simulating authentication for now
-<<<<<<< HEAD
-      localStorage.setItem('user', JSON.stringify({
-        id: '1',
-        name: formData.name || 'User',
-        email: formData.email,
-        phone_number: formData.phone_number,
-        role: formData.role
-      }));
-      
-      toast({
-        title: mode === 'login' ? 'Logged in successfully' : 'Account created successfully',
-        description: "Welcome to the Task Management System",
-      });
-      
-      navigate('/dashboard');
-=======
       localStorage.setItem(
         "user",
         JSON.stringify({
           id: "1",
           name: formData.name || "User",
           email: formData.email,
+          phone_number: formData.phone_number,
           role: formData.role,
         })
       );
@@ -119,7 +96,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode }) => {
       }
 
       navigate("/dashboard");
->>>>>>> c904955 (chore: update client and server files)
     } catch (error) {
       toast({
         title: "Authentication error",
@@ -178,9 +154,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode }) => {
               className='h-11'
             />
           </div>
-<<<<<<< HEAD
-          
-          {mode === 'register' && (
+
+          {mode === "register" && (
             <div className="space-y-2">
               <Label htmlFor="phone_number">Phone Number</Label>
               <Input 
@@ -195,16 +170,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode }) => {
               />
             </div>
           )}
-          
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <div className="relative">
-              <Input 
-                id="password" 
-                name="password" 
-                type={showPassword ? "text" : "password"} 
-                placeholder="••••••••" 
-=======
 
           <div className='space-y-2'>
             <Label htmlFor='password'>Password</Label>
@@ -214,7 +179,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode }) => {
                 name='password'
                 type={showPassword ? "text" : "password"}
                 placeholder='••••••••'
->>>>>>> c904955 (chore: update client and server files)
                 required
                 value={formData.password}
                 onChange={handleChange}
